@@ -5,8 +5,12 @@ int main()
 {
     ProcessGenerator generator;
 
-    Process p = generator.getNewProcess();
-    p.print();
+    ProcessVector procs = generator.getNProcessesWithMaxMemory(50, 10);
+
+    for (int i = 0; i < 50; i++)
+    {
+        ;//procs[i].print();
+    }
 
     return 0;
 }
