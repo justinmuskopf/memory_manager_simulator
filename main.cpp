@@ -9,7 +9,7 @@ int main()
 
     for (int i = 0; i < 50; i++)
     {
-        ;//procs[i].print();
+        procs[i].print();
     }
 
     return 0;

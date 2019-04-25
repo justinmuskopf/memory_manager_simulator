@@ -24,7 +24,7 @@ typedef std::vector<Process> ProcessVector;
 class ProcessGenerator
 {
     public:
-        ProcessGenerator();
+        ProcessGenerator(bool verbose=false);
         Process getProcess();
         ProcessVector getNProcesses(int n);
         ProcessVector getNProcessesWithMaxMemory(int n, int memoryInMB);
@@ -42,6 +42,8 @@ class ProcessGenerator
         const long MAX_CPU_CYCLES = 50e12;
         const long MIN_PID = 1;
         const long MAX_PID = 32768; // 2^15
+
+        bool verbose;
 
         std::vector<long> pids;
 };

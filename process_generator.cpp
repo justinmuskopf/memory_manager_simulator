@@ -22,9 +22,11 @@ void Process::print()
     std::cout << "===================================\n";
 }
 
-ProcessGenerator::ProcessGenerator()
+ProcessGenerator::ProcessGenerator(bool _verbose)
 {
     srand(time(NULL));
+
+    verbose = _verbose;
 }
 
 long ProcessGenerator::randint(long min, long max)
@@ -92,28 +94,28 @@ ProcessVector ProcessGenerator::getNProcesses(int n)
 
 ProcessVector ProcessGenerator::getNProcessesWithMaxMemory(int n, int memoryInMB)
 {
-    // Each process can have a maximum of this number of bytes
-    // to fit in a `memoryInMB` sized hole
-    long maxProcessMemoryInBytes = (memoryInMB * MB) / n;
-
     ProcessVector generatedProcesses = getNProcesses(n);
+    
+    long memoryWantedInBytes = memoryInMB * MB;
+    long maxProcessMemoryInBytes = memoryWantedInBytes / n;
+    long memoryGenerated = 0;
 
-    double memoryGenerated = 0.0;
-
-    // Override memory so that all procs fit in hole
+    // Overwrite memory so that all procs fit in hole
     for (int i = 0; i < n; i++)
     {
         long newMem = randint(MIN_MEMORY_FOOTPRINT, maxProcessMemoryInBytes);
 
-        std::cout << newMem / static_cast<double>(MB) << "\n";
-
         generatedProcesses[i].footprint = newMem;
 
         memoryGenerated += newMem;
+
+        maxProcessMemoryInBytes = (memoryWantedInBytes - memoryGenerated) / (n - i);
     }
 
+    if (verbose)
+        std::cout << "Total memory generated: " << memoryGenerated / static_cast<double>(MB) << "\n";
 
-    std::cout << "Total memory generated: " << memoryGenerated / static_cast<double>(MB) << "\n";
+    std::random_shuffle(generatedProcesses.begin(), generatedProcesses.end());
 
     return generatedProcesses;
 }
