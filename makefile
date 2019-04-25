@@ -1,8 +1,9 @@
 
 all: clean processGenerator main memoryManager
+	g++ memoryManager processGenerator main -o project_2 -std=c++11
 
 memoryManager:
-	g++ processGenerator main -o memoryManager
+	g++ -c memory_manager.cpp -o memoryManager
 
 processGenerator:
 	g++ -c process_generator.cpp -o processGenerator

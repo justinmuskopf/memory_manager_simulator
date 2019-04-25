@@ -1,24 +1,41 @@
 #include <ctime>
 #include <iostream>
 #include <algorithm>
+#include <unistd.h>
 #include "process_generator.h"
 
+#define SEC_TO_US 1e6
 
-Process::Process(long _pid, long _cycles, long _footprint)
+Process::Process(UINT64 _pid, UINT64 _cycles, UINT64 _footprint)
 {
     pid = _pid;
     cycles = _cycles;
-    footprint = _footprint;
+    setFootprint(_footprint);
+}
+
+void Process::setFootprint(UINT64 fp)
+{
+    footprint = fp;
+    footprintMB = fp / static_cast<float>(MB);
+}
+
+void Processor::execute(Process &process)
+{
+/*    float secondsToExecute = process.cycles / static_cast<float>(CPU_OPS_PER_SEC);
+
+    int usToExecute =  secondsToExecute * SEC_TO_US;
+    
+    std::cout << "Simulating Process Execution for " << secondsToExecute << " seconds...\n";
+
+    usleep(usToExecute);*/
 }
 
 void Process::print()
 {
-    float memoryInMB = (float)footprint / MB;
-
     std::cout << "===================================\n";
     std::cout << "| PID: " << pid << "\n";
     std::cout << "| CPU Cycles: " << cycles << "\n";
-    std::cout << "| Memory Footprint: " << footprint << " B (" << memoryInMB << " MB)\n";
+    std::cout << "| Memory Footprint: " << footprint << " B (" << footprintMB << " MB)\n";
     std::cout << "===================================\n";
 }
 
@@ -29,33 +46,33 @@ ProcessGenerator::ProcessGenerator(bool _verbose)
     verbose = _verbose;
 }
 
-long ProcessGenerator::randint(long min, long max)
+UINT64 ProcessGenerator::randint(UINT64 min, UINT64 max)
 {
-    long range = max - min;
+    UINT64 range = max - min;
 
-    return (rand() % range) + min;
+    return ( static_cast<UINT64>(rand()) % range) + min;
 }
 
-long ProcessGenerator::getRandomMemoryFootprint()
+UINT64 ProcessGenerator::getRandomMemoryFootprint()
 {
     return randint(MIN_MEMORY_FOOTPRINT, MAX_MEMORY_FOOTPRINT);
 }
 
-long ProcessGenerator::getRandomCpuCycles()
+UINT64 ProcessGenerator::getRandomCpuCycles()
 {
     return randint(MIN_CPU_CYCLES, MAX_CPU_CYCLES);
 }
 
-bool ProcessGenerator::pidIsUsed(long pid)
+bool ProcessGenerator::pidIsUsed(UINT64 pid)
 {
     bool found = std::find(pids.begin(), pids.end(), pid) != pids.end();
 
     return found;
 }
 
-long ProcessGenerator::getRandomPid()
+UINT64 ProcessGenerator::getRandomPid()
 {
-    long pid;
+    UINT64 pid;
 
     do
     {
@@ -67,9 +84,9 @@ long ProcessGenerator::getRandomPid()
 
 Process ProcessGenerator::getProcess()
 {
-    long pid = getRandomPid();
-    long footprint = getRandomMemoryFootprint();
-    long cycles = getRandomCpuCycles();
+    UINT64 pid = getRandomPid();
+    UINT64 footprint = getRandomMemoryFootprint();
+    UINT64 cycles = getRandomCpuCycles();
 
     Process process(pid, cycles, footprint);
 
@@ -96,16 +113,16 @@ ProcessVector ProcessGenerator::getNProcessesWithMaxMemory(int n, int memoryInMB
 {
     ProcessVector generatedProcesses = getNProcesses(n);
     
-    long memoryWantedInBytes = memoryInMB * MB;
-    long maxProcessMemoryInBytes = memoryWantedInBytes / n;
-    long memoryGenerated = 0;
+    UINT64 memoryWantedInBytes = memoryInMB * MB;
+    UINT64 maxProcessMemoryInBytes = memoryWantedInBytes / n;
+    UINT64 memoryGenerated = 0;
 
     // Overwrite memory so that all procs fit in hole
     for (int i = 0; i < n; i++)
     {
-        long newMem = randint(MIN_MEMORY_FOOTPRINT, maxProcessMemoryInBytes);
+        UINT64 newMem = randint(MIN_MEMORY_FOOTPRINT, maxProcessMemoryInBytes);
 
-        generatedProcesses[i].footprint = newMem;
+        generatedProcesses[i].setFootprint(newMem);
 
         memoryGenerated += newMem;
 
