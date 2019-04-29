@@ -12,10 +12,20 @@ void Question_1()
     memoryManager.executeProcessesUsingMalloc(procs);
 }
 
+void Question_3()
+{
+    ProcessGenerator generator;
+    MemoryManager memoryManager(10);
+
+    ProcessVector procs = generator.getNProcessesWithMaxMemory(50, 10);
+
+    memoryManager.executeProcessesUsingCustom(procs);
+}
+
 
 int main()
 {
-    Question_1();
+    Question_3();
 
     return 0;
 }

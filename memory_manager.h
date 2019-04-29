@@ -5,7 +5,13 @@
 #include "process_generator.h"
 #include "processor.h"
 
-typedef std::pair<int, int> MemoryHole;
+struct MemoryHole
+{
+    MemoryHole(UINT64, UINT64);
+    std::pair<UINT64, UINT64> range;
+    UINT64 pid;
+    UINT64 size();
+};
 
 typedef std::vector<MemoryHole> MemoryBlock;
 
