@@ -11,6 +11,7 @@ Process::Process(UINT64 _pid, UINT64 _cycles, UINT64 _footprint)
     pid = _pid;
     cycles = _cycles;
     setFootprint(_footprint);
+    completionTime = 0;
 }
 
 void Process::setFootprint(UINT64 fp)
@@ -19,15 +20,14 @@ void Process::setFootprint(UINT64 fp)
     footprintMB = fp / static_cast<float>(MB);
 }
 
-void Processor::execute(Process &process)
+bool Process::running()
 {
-/*    float secondsToExecute = process.cycles / static_cast<float>(CPU_OPS_PER_SEC);
+    return completionTime > time(NULL);
+}
 
-    int usToExecute =  secondsToExecute * SEC_TO_US;
-    
-    std::cout << "Simulating Process Execution for " << secondsToExecute << " seconds...\n";
-
-    usleep(usToExecute);*/
+bool Process::completed()
+{
+    return completionTime != 0 && !running();
 }
 
 void Process::print()
@@ -50,7 +50,7 @@ UINT64 ProcessGenerator::randint(UINT64 min, UINT64 max)
 {
     UINT64 range = max - min;
 
-    return ( static_cast<UINT64>(rand()) % range) + min;
+    return (static_cast<UINT64>(rand() * 100) % range) + min;
 }
 
 UINT64 ProcessGenerator::getRandomMemoryFootprint()

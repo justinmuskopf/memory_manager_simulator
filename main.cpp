@@ -5,7 +5,7 @@
 void Question_1()
 {
     ProcessGenerator generator;
-    MemoryManager memoryManager;
+    MemoryManager memoryManager(10);
 
     ProcessVector procs = generator.getNProcessesWithMaxMemory(50, 10);
 

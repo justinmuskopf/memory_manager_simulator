@@ -21,22 +21,22 @@ struct Process
     Process(UINT64 pid, UINT64 cycles, UINT64 footprint);
     void setFootprint(UINT64 fp);
     void print();
+    bool running();
+    bool completed();
 
     UINT64 pid;
     UINT64 cycles;
     UINT64 footprint;
+    UINT64 arrivalTime;
+    UINT64 completionTime;
     float footprintMB;
 
     void *memory;
 };
 
-struct Processor 
-{
-    void execute(Process &process);
-    const UINT64 CPU_OPS_PER_SEC = CPU_SPEED_GHZ * 1e9;
-};
-
 typedef std::vector<Process> ProcessVector;
+
+
 
 class ProcessGenerator
 {
