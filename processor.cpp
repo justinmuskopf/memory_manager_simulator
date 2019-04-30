@@ -23,29 +23,31 @@ bool Processor::perform()
 
 void Processor::removeCompletedProcesses()
 {
-    time_t currentTime = time(NULL);
-
     int numProcs = processes.size();
 
-    for (int i = 0; i < numProcs; i++)
+    ProcessVector::iterator it = processes.begin();
+    while (it != processes.end())
     {
-        if (currentTime > processes[i].completionTime)
+        if (it->completed())
         {
-            std::cout << "Process " << i + 1 << " has completed execution.\n";
+            std::cout << "Process " << it->pid << " has completed execution.\n";
 
-            totalMemoryUsed -= processes[i].footprint;
-            processes.erase(processes.begin() + i);
+            totalMemoryUsed -= it->footprint;
+            it = processes.erase(it);
+        }
+        else
+        {
+            it++;
         }
     }
 }
 
 void Processor::execute(Process &process)
 {
-
     float secondsToExecute = process.cycles / static_cast<float>(CPU_OPS_PER_SEC);
 
-    process.arrivalTime = time(NULL);
-    process.completionTime = process.arrivalTime + ceil(secondsToExecute);
+    process.arrivalTime = clock();
+    process.completionTime = process.arrivalTime + (secondsToExecute * CLOCKS_PER_SEC);
 
     totalMemoryUsed += process.footprint;
 

@@ -8,12 +8,21 @@
 struct MemoryHole
 {
     MemoryHole(UINT64, UINT64);
+    void resize(UINT64, UINT64);
     std::pair<UINT64, UINT64> range;
     UINT64 pid;
-    UINT64 size();
+    UINT64 size;
+    bool operator==(const MemoryHole &other);
 };
 
-typedef std::vector<MemoryHole> MemoryBlock;
+typedef std::vector<MemoryHole> MemoryVector;
+
+struct MemoryBlock
+{
+    MemoryVector memory;
+    void print();
+    void consolidate();
+};
 
 
 class MemoryManager
@@ -36,7 +45,7 @@ class MemoryManager
         UINT64 systemMemorySize;
         UINT64 freeMemory;
 
-        MemoryBlock memory;
+        MemoryBlock block;
         ProcessVector queue;
 };
 

@@ -22,7 +22,7 @@ void Process::setFootprint(UINT64 fp)
 
 bool Process::running()
 {
-    return completionTime > time(NULL);
+    return completionTime > clock();
 }
 
 bool Process::completed()
@@ -87,6 +87,8 @@ Process ProcessGenerator::getProcess()
     UINT64 pid = getRandomPid();
     UINT64 footprint = getRandomMemoryFootprint();
     UINT64 cycles = getRandomCpuCycles();
+
+    std::cout << cycles/static_cast<float>(CPU_OPS_PER_SEC) << "\n";
 
     Process process(pid, cycles, footprint);
 

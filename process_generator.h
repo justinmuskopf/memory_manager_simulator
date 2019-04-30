@@ -27,8 +27,8 @@ struct Process
     UINT64 pid;
     UINT64 cycles;
     UINT64 footprint;
-    UINT64 arrivalTime;
-    UINT64 completionTime;
+    clock_t arrivalTime;
+    clock_t completionTime;
     float footprintMB;
 
     void *memory;
