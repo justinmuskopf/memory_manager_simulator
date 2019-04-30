@@ -88,8 +88,6 @@ Process ProcessGenerator::getProcess()
     UINT64 footprint = getRandomMemoryFootprint();
     UINT64 cycles = getRandomCpuCycles();
 
-    std::cout << cycles/static_cast<float>(CPU_OPS_PER_SEC) << "\n";
-
     Process process(pid, cycles, footprint);
 
     pids.push_back(pid);
