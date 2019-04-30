@@ -12,7 +12,7 @@ void Question_1()
     memoryManager.executeProcessesUsingMalloc(procs);
 }
 
-void Question_3()
+void Question_2()
 {
     ProcessGenerator generator;
     MemoryManager memoryManager(10);
@@ -22,10 +22,30 @@ void Question_3()
     memoryManager.executeProcessesUsingCustom(procs);
 }
 
+void Question_3a()
+{
+    ProcessGenerator generator;
+    MemoryManager memoryManager(5);
+
+    ProcessVector procs = generator.getNProcessesWithMaxMemory(50, 10);
+
+    memoryManager.executeProcessesUsingCustom(procs);
+}
+
+void Question_3b()
+{
+    ProcessGenerator generator;
+    MemoryManager memoryManager(1);
+
+    ProcessVector procs = generator.getNProcessesWithMaxMemory(50, 10);
+
+    memoryManager.executeProcessesUsingCustom(procs);
+}
+
 
 int main()
 {
-    Question_3();
+    Question_3b();
 
     return 0;
 }
