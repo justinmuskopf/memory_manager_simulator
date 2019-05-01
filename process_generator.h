@@ -12,7 +12,7 @@ const UINT64 MB  = KB * 1024;
 const UINT64 GB  = MB * 1024;
 const UINT64 GHZ = 1e9;
 
-const float CPU_SPEED_GHZ        = 3.5;                 // Value used for CPU speed simulation
+const float CPU_SPEED_GHZ         = 3.5;                 // Value used for CPU speed simulation
 const UINT64 CPU_OPS_PER_SEC      = CPU_SPEED_GHZ * GHZ; // Number of CPU operations per second
 const UINT64 MAX_PROCESS_RUN_TIME = 1;                   // Maximum number of seconds a process should "run"
 
@@ -31,13 +31,12 @@ struct Process
     clock_t predictedCompletionTime;
     clock_t actualCompletionTime;
     float footprintMB;
+    float secondsToExecute;
 
     void *memory;
 };
 
 typedef std::vector<Process> ProcessVector;
-
-
 
 class ProcessGenerator
 {

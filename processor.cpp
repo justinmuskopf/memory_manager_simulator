@@ -4,10 +4,6 @@
 #include "processor.h"
 
 
-Processor::Processor()
-{
-}
-
 bool Processor::perform()
 {
     removeCompletedProcesses();
@@ -17,8 +13,6 @@ bool Processor::perform()
 
 void Processor::removeCompletedProcesses()
 {
-    int numProcs = processes.size();
-
     ProcessVector::iterator it = processes.begin();
     while (it != processes.end())
     {

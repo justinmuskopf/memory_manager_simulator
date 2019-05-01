@@ -5,30 +5,8 @@
 #include <ctime>
 #include "process_generator.h"
 #include "processor.h"
+#include "memory_block.h"
 
-struct MemoryHole
-{
-    MemoryHole(UINT64, UINT64);
-    
-    UINT64 begin();
-    UINT64 end();
-    void resize(UINT64, UINT64);
-    bool occupied();
-    bool operator==(const MemoryHole &other);
-    
-    std::pair<UINT64, UINT64> range;
-    UINT64 pid;
-    UINT64 size;
-};
-
-typedef std::vector<MemoryHole> MemoryVector;
-
-struct MemoryBlock
-{
-    MemoryVector memory;
-    void print();
-    void consolidate();
-};
 
 float get_elapsed(clock_t beginTime);
 
@@ -36,14 +14,17 @@ struct TimeResults
 {
     float mallocTime;
     float freeTime;
+    float overhead;
 };
 
 class MemoryManager
 {
     public:
-        MemoryManager(int systemMemoryInMB);
+        MemoryManager(int systemMemoryInMB, bool verbose=false);
         TimeResults executeProcessesUsingMalloc(ProcessVector processes);
         TimeResults executeProcessesUsingCustom(ProcessVector processes);
+
+        static bool VERBOSE;
 
     private:
         void initSystemMemory();

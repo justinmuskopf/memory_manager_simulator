@@ -4,15 +4,15 @@
 #include <unistd.h>
 #include "process_generator.h"
 
-#define SEC_TO_US 1e6
-
 Process::Process(UINT64 _pid, UINT64 _cycles, UINT64 _footprint)
 {
     pid = _pid;
     cycles = _cycles;
     setFootprint(_footprint);
 
-    predictedCompletionTime = clock() + cycles;
+    secondsToExecute = cycles / static_cast<float>(CPU_OPS_PER_SEC);
+
+    predictedCompletionTime = clock() + (secondsToExecute * CLOCKS_PER_SEC);
 
     actualCompletionTime = 0;
 }

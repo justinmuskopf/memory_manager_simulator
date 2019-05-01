@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include "memory_manager.h"
 
+bool MemoryManager::VERBOSE = false;
+
 float get_elapsed(clock_t beginTime)
 {
     clock_t cycles = clock() - beginTime;
@@ -10,70 +12,11 @@ float get_elapsed(clock_t beginTime)
     return cycles / static_cast<float>(CLOCKS_PER_SEC);
 }
 
-MemoryHole::MemoryHole(UINT64 start, UINT64 stop)
-{
-    pid = 0;
-    resize(start, stop);
-}
-
-UINT64 MemoryHole::begin()
-{
-    return range.first;
-}
-
-UINT64 MemoryHole::end()
-{
-    return range.second;
-}
-
-// Compares two MemoryHoles
-bool MemoryHole::operator==(const MemoryHole &other)
-{
-    return (begin() == other.range.first && end() == other.range.second);
-}
-
-bool MemoryHole::occupied()
-{
-    return (pid != 0);
-}
-
-// Re-sets the beginning/end of a MemoryHole
-void MemoryHole::resize(UINT64 start, UINT64 stop)
-{
-    if (stop < start)
-    {
-        std::cout << "ERROR! Invalid Memory Bounds Provided to Memory Manager! (<" << start << ", " << stop << ">)\n";
-        exit(1);
-    }
-
-    // Set start/stop
-    range.first = start;
-    range.second = stop;
-
-    // The new size
-    size = stop - start;
-
-    std::cout << "New memory hole created: <" << start << ", " << stop << ">\n";
-}
-
-// Prints all holes currently contained in memory
-void MemoryBlock::print()
-{
-    for (MemoryHole hole : memory)
-    {
-        UINT64 holeSize = hole.size;
-        float holeSizeMB = holeSize / static_cast<float>(MB); 
-        std::cout << "\t<" << hole.range.first << ", " << hole.range.second << "> (" << holeSize << " B | " << holeSizeMB << " MB)";
-        if (hole.occupied())
-            std::cout << " - " << "OCCUPIED PID: " << hole.pid << "\n";
-        else
-            std::cout << " - " << "UNOCCUPIED\n";
-    }
-}
-
 // MemoryManager constructor
-MemoryManager::MemoryManager(int systemMemoryInMB)
+MemoryManager::MemoryManager(int systemMemoryInMB, bool _verbose)
 {
+    VERBOSE = _verbose;
+
     systemMemorySize = systemMemoryInMB * MB;
 }
 
@@ -119,7 +62,7 @@ TimeResults MemoryManager::executeProcessesUsingMalloc(ProcessVector processes)
     while (processor.perform());
 
 
-    return TimeResults {totalMallocTime, totalFreeTime};
+    return TimeResults {totalMallocTime, totalFreeTime, 0};
 }
 
 // Initializes system memory
@@ -173,7 +116,7 @@ float MemoryManager::my_malloc(Process process)
     for (int i = 0; i < numHoles; i++)
     {
         MemoryHole currentHole = block.memory[i];
-        if (currentHole.occupied() || currentHole.size < bytesNeeded)
+        if (currentHole.occupied() || currentHole.size() < bytesNeeded)
         {
             continue;
         }
@@ -200,11 +143,11 @@ float MemoryManager::my_malloc(Process process)
 
     // Create the process's hole
     MemoryHole procHole(foundHole.begin(), procHoleEnd);
-    procHole.pid = process.pid;
+    procHole.setPid(process.pid);
 
     // Resize the found hole to accomodate process
     foundHole.resize(procHoleEnd + 1, foundHole.end());
-    foundHole.pid = 0;
+    foundHole.vacate();
 
     // Insert both holes into memory
     it = block.memory.insert(it, procHole);
@@ -235,7 +178,7 @@ void MemoryBlock::consolidate()
             continue;
         }
 
-        holeSize += it->size;
+        holeSize += it->size();
 
         fragments.push_back(*it);
         it = memory.erase(it);
@@ -257,7 +200,7 @@ void MemoryBlock::consolidate()
     it = memory.begin();
     while (it != memory.end())
     {
-        it->resize(lastEnd + 1, lastEnd + it->size + 1);
+        it->resize(lastEnd + 1, lastEnd + it->size() + 1);
         lastEnd = it->end();
 
         it++;
@@ -283,7 +226,7 @@ float MemoryManager::my_free(Process process)
     {
         MemoryHole hole = block.memory[i];
 
-        if (hole.pid != process.pid)
+        if (hole.pid() != process.pid)
         {
             continue;
         }
@@ -300,7 +243,7 @@ float MemoryManager::my_free(Process process)
     }
 
     // Hole is now unused, update free memory
-    block.memory[holeIdx].pid = 0;
+    block.memory[holeIdx].vacate();
     freeMemory += process.footprint;
 
     return get_elapsed(begin);
@@ -313,13 +256,8 @@ TimeResults MemoryManager::executeProcessesUsingCustom(ProcessVector processes)
     // Initialize system memory
     initSystemMemory();
 
-    int numProcs = processes.size();
-
-    std::cout << "Running custom malloc/free test with " << numProcs << " processes...\n";
-
-    int procIdx = 0;
-
     ProcessVector processesRunning;
+    ProcessVector completedProcesses;
 
     float totalMallocTime = 0;
     float totalFreeTime = 0;
@@ -333,13 +271,15 @@ TimeResults MemoryManager::executeProcessesUsingCustom(ProcessVector processes)
         {
             if (!it->completed())
             {
-              it++;
+                it++;
             }
             else
             {
-                std::cout << "Removing completed process with PID: " << it->pid << "\n";
+                if (VERBOSE)
+                    std::cout << "Removing completed process with PID: " << it->pid << "\n";
                 
                 totalFreeTime += my_free(*it);
+                completedProcesses.push_back(*it);
                 it = processesRunning.erase(it);
             }
         }
@@ -356,7 +296,8 @@ TimeResults MemoryManager::executeProcessesUsingCustom(ProcessVector processes)
                 }
                 else
                 {
-                    std::cout << "Allocating process with PID: " << it->pid << "\n";
+                    if (VERBOSE)
+                        std::cout << "Executing queued process with PID: " << it->pid << "\n";
 
                     totalMallocTime += my_malloc(*it);
                     processor.execute(*it);
@@ -372,14 +313,16 @@ TimeResults MemoryManager::executeProcessesUsingCustom(ProcessVector processes)
         {
             if (!validMemoryRequest(it->footprint))
             {
-                std::cout << "Queueing process with PID: " << it->pid << "\n";
+                if (VERBOSE)
+                    std::cout << "Queueing process with PID: " << it->pid << "\n";
                 
                 queue.push_back(*it);
                 it = processes.erase(it);
             }
             else
             {
-                std::cout << "Executing process with PID: " << it->pid << "\n";
+                if (VERBOSE)
+                    std::cout << "Executing process with PID: " << it->pid << "\n";
 
                 totalMallocTime += my_malloc(*it);
 
@@ -395,5 +338,14 @@ TimeResults MemoryManager::executeProcessesUsingCustom(ProcessVector processes)
     std::cout << "Holes after execution:\n";
     block.print();
 
-    return TimeResults {totalMallocTime, totalFreeTime};
+
+    float overheadTime = 0;
+    for (Process process : completedProcesses)
+    {
+        overheadTime += (process.actualCompletionTime - process.predictedCompletionTime) / static_cast<float>(CLOCKS_PER_SEC);
+    }
+
+    overheadTime /= completedProcesses.size();
+
+    return TimeResults {totalMallocTime, totalFreeTime, overheadTime};
 }

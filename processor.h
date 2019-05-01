@@ -3,7 +3,6 @@
 class Processor 
 {
     public:
-        Processor();
         void execute(Process &process);
         bool perform();
 
