@@ -58,6 +58,7 @@ void Question_3a(bool verbose=false)
 
     std::cout << "Total time given to Malloc: " << times.mallocTime << "\n";
     std::cout << "Total time given to Free: " << times.freeTime << "\n";
+    std::cout << "Average time expended on waiting for sufficient memory: " << times.overhead << " seconds\n";
 }
 
 // Completes Question 3b
@@ -79,8 +80,7 @@ void Question_3b(bool verbose=false)
     std::cout << "Total time given to Malloc: " << times.mallocTime << "\n";
     std::cout << "Total time given to Free: " << times.freeTime << "\n";
 
-
-    std::cout << "Seconds expended on waiting for sufficient memory: " << times.overhead << "\n";
+    std::cout << "Average time expended on waiting for sufficient memory: " << times.overhead << " seconds\n";
 }
 
 // Clears the screen
