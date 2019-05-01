@@ -5,6 +5,7 @@
 
 bool MemoryManager::VERBOSE = false;
 
+// Get the seconds elapsed from a clock_t and now
 float get_elapsed(clock_t beginTime)
 {
     clock_t cycles = clock() - beginTime;
@@ -339,6 +340,7 @@ TimeResults MemoryManager::executeProcessesUsingCustom(ProcessVector processes)
     block.print();
 
 
+    // Calculate the total overhead introduced by memory limitations
     float overheadTime = 0;
     for (Process process : completedProcesses)
     {

@@ -85,6 +85,7 @@ UINT64 ProcessGenerator::getRandomPid()
     return pid;
 }
 
+// Get a randomly generated process
 Process ProcessGenerator::getProcess()
 {
     UINT64 pid = getRandomPid();
@@ -98,6 +99,7 @@ Process ProcessGenerator::getProcess()
     return process;
 }
 
+// Returns a vector filled with n processes (no cap on memory)
 ProcessVector ProcessGenerator::getNProcesses(int n)
 {
     ProcessVector generatedProcesses;
@@ -112,6 +114,7 @@ ProcessVector ProcessGenerator::getNProcesses(int n)
     return generatedProcesses;
 }
 
+// Returns a vector filled with `n` processes with a total max memory of `memoryInMB` MB
 ProcessVector ProcessGenerator::getNProcessesWithMaxMemory(int n, int memoryInMB)
 {
     ProcessVector generatedProcesses = getNProcesses(n);

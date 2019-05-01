@@ -83,7 +83,7 @@ void Question_3b(bool verbose=false)
     std::cout << "Seconds expended on waiting for sufficient memory: " << times.overhead << "\n";
 }
 
-
+// Clears the screen
 void clearScreen()
 {
     system("clear");

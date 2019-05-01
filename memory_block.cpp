@@ -8,26 +8,31 @@ MemoryHole::MemoryHole(UINT64 start, UINT64 stop)
     resize(start, stop);
 }
 
+// Get the start of the hole
 UINT64 MemoryHole::begin()
 {
     return range.first;
 }
 
+// Get the end of the hole
 UINT64 MemoryHole::end()
 {
     return range.second;
 }
 
+// Get the pid of the hole
 UINT64 MemoryHole::pid()
 {
     return _pid;
 }
 
+// Remove the denizen from the hole
 void MemoryHole::vacate()
 {
     _pid = 0;
 }
 
+// Set the hole's PID
 void MemoryHole::setPid(UINT64 newPid)
 {
     _pid = newPid;
@@ -39,6 +44,7 @@ bool MemoryHole::operator==(const MemoryHole &other)
     return (begin() == other.range.first && end() == other.range.second);
 }
 
+// Is the hole occupied?
 bool MemoryHole::occupied()
 {
     return (_pid != 0);
@@ -64,6 +70,7 @@ void MemoryHole::resize(UINT64 start, UINT64 stop)
         std::cout << "New memory hole created: <" << start << ", " << stop << ">\n";
 }
 
+// Get the size of the hole
 UINT64 MemoryHole::size()
 {
     return _size;
