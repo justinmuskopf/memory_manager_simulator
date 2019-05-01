@@ -6,12 +6,6 @@
 
 Processor::Processor()
 {
-    totalMemoryUsed = 0;
-}
-
-UINT64 Processor::getMemoryUsed()
-{
-    return totalMemoryUsed;
 }
 
 bool Processor::perform()
@@ -31,8 +25,6 @@ void Processor::removeCompletedProcesses()
         if (it->completed())
         {
             std::cout << "Process " << it->pid << " has completed execution.\n";
-
-            totalMemoryUsed -= it->footprint;
             it = processes.erase(it);
         }
         else
@@ -47,9 +39,7 @@ void Processor::execute(Process &process)
     float secondsToExecute = process.cycles / static_cast<float>(CPU_OPS_PER_SEC);
 
     process.arrivalTime = clock();
-    process.completionTime = process.arrivalTime + (secondsToExecute * CLOCKS_PER_SEC);
-
-    totalMemoryUsed += process.footprint;
+    process.actualCompletionTime = process.arrivalTime + (secondsToExecute * CLOCKS_PER_SEC);
 
     processes.push_back(process);
 }

@@ -12,7 +12,11 @@ void Question_1()
 
     ProcessVector procs = generator.getNProcessesWithMaxMemory(50, 10);
 
-    memoryManager.executeProcessesUsingMalloc(procs);
+    TimeResults times;
+    times = memoryManager.executeProcessesUsingMalloc(procs);
+
+    std::cout << "Total time given to Malloc: " << times.mallocTime << "\n";
+    std::cout << "Total time given to Free: " << times.freeTime << "\n";
 }
 
 // Completes Question 2
@@ -25,7 +29,11 @@ void Question_2()
 
     ProcessVector procs = generator.getNProcessesWithMaxMemory(50, 10);
 
-    memoryManager.executeProcessesUsingCustom(procs);
+    TimeResults times;
+    times = memoryManager.executeProcessesUsingCustom(procs);
+
+    std::cout << "Total time given to Malloc: " << times.mallocTime << "\n";
+    std::cout << "Total time given to Free: " << times.freeTime << "\n";
 }
 
 // Completes Question 3a
@@ -38,7 +46,11 @@ void Question_3a()
 
     ProcessVector procs = generator.getNProcessesWithMaxMemory(50, 10);
 
-    memoryManager.executeProcessesUsingCustom(procs);
+    TimeResults times;
+    times = memoryManager.executeProcessesUsingCustom(procs);
+
+    std::cout << "Total time given to Malloc: " << times.mallocTime << "\n";
+    std::cout << "Total time given to Free: " << times.freeTime << "\n";
 }
 
 // Completes Question 3b
@@ -51,15 +63,20 @@ void Question_3b()
 
     ProcessVector procs = generator.getNProcessesWithMaxMemory(50, 10);
 
-    memoryManager.executeProcessesUsingCustom(procs);
+    TimeResults times;
+
+    times = memoryManager.executeProcessesUsingCustom(procs);
+
+    std::cout << "Total time given to Malloc: " << times.mallocTime << "\n";
+    std::cout << "Total time given to Free: " << times.freeTime << "\n";
 }
 
 
 int main()
 {
-    //Question_1();
-    //Question_2();
-    //Question_3a();
+    Question_1();
+    Question_2();
+    Question_3a();
     Question_3b();
 
     return 0;

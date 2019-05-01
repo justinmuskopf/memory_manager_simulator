@@ -11,7 +11,10 @@ Process::Process(UINT64 _pid, UINT64 _cycles, UINT64 _footprint)
     pid = _pid;
     cycles = _cycles;
     setFootprint(_footprint);
-    completionTime = 0;
+
+    predictedCompletionTime = clock() + cycles;
+
+    actualCompletionTime = 0;
 }
 
 void Process::setFootprint(UINT64 fp)
@@ -22,12 +25,12 @@ void Process::setFootprint(UINT64 fp)
 
 bool Process::running()
 {
-    return completionTime > clock();
+    return actualCompletionTime > clock();
 }
 
 bool Process::completed()
 {
-    return completionTime != 0 && !running();
+    return actualCompletionTime != 0 && !running();
 }
 
 void Process::print()

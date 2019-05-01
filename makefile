@@ -1,18 +1,23 @@
 
-all: clean processGenerator main memoryManager processor
-	g++ memoryManager processGenerator processor main -o project_2 -std=c++11
+G++ = g++ -std=c++11
+G++_FLAGS = $(G++) -c
+ALL = process_generator.o main.o memory_manager.o processor.o
+EXEC_NAME = project_2
 
-memoryManager:
-	g++ -c memory_manager.cpp -o memoryManager -std=c++11
+all: clean $(ALL)
+	$(G++) $(ALL) -o $(EXEC_NAME)
 
-processGenerator:
-	g++ -c process_generator.cpp -o processGenerator -std=c++11
+memory_manager.o:
+	$(G++_FLAGS) memory_manager.cpp
 
-processor:
-	g++ -c processor.cpp -o processor -std=c++11
+process_generator.o:
+	$(G++_FLAGS) process_generator.cpp
 
-main:
-	g++ -c main.cpp -o main -std=c++11
+processor.o:
+	$(G++_FLAGS) processor.cpp
+
+main.o:
+	$(G++_FLAGS) main.cpp
 
 clean:
-	rm -rf processGenerator main memoryManager processor project_2
+	rm -rf $(ALL) $(EXEC_NAME)

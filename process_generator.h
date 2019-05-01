@@ -14,7 +14,7 @@ const UINT64 GHZ = 1e9;
 
 const float CPU_SPEED_GHZ        = 3.5;                 // Value used for CPU speed simulation
 const UINT64 CPU_OPS_PER_SEC      = CPU_SPEED_GHZ * GHZ; // Number of CPU operations per second
-const UINT64 MAX_PROCESS_RUN_TIME = 5;                   // Maximum number of seconds a process should "run"
+const UINT64 MAX_PROCESS_RUN_TIME = 1;                   // Maximum number of seconds a process should "run"
 
 struct Process 
 {
@@ -28,7 +28,8 @@ struct Process
     UINT64 cycles;
     UINT64 footprint;
     clock_t arrivalTime;
-    clock_t completionTime;
+    clock_t predictedCompletionTime;
+    clock_t actualCompletionTime;
     float footprintMB;
 
     void *memory;
