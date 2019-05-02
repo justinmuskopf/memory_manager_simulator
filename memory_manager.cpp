@@ -349,5 +349,7 @@ TimeResults MemoryManager::executeProcessesUsingCustom(ProcessVector processes)
 
     overheadTime /= completedProcesses.size();
 
+    freeSystemMemory();
+
     return TimeResults {totalMallocTime, totalFreeTime, overheadTime};
 }
