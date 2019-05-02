@@ -3,7 +3,7 @@ A C++ simulation of a memory manager using custom malloc and free functions.
 
 ## Authors
 * [Fischer Davis](https://www.github.com/fischerdavis94)
-* [Jacob Montes](https://www.github.com/jacobmontesUNT)
+* [Jacob Montes](https://www.github.com/jmontesUNT)
 * [Justin Muskopf](https://www.github.com/justinmuskopf)
 
 ## Requirements
